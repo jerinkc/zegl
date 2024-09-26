@@ -17,8 +17,10 @@ ActiveRecord::Schema.define(version: 2024_09_25_144724) do
 
   create_table "expenses", force: :cascade do |t|
     t.text "description"
+    t.bigint "creator_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["creator_id"], name: "index_expenses_on_creator_id"
   end
 
   create_table "transactions", force: :cascade do |t|
@@ -49,6 +51,7 @@ ActiveRecord::Schema.define(version: 2024_09_25_144724) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "expenses", "users", column: "creator_id"
   add_foreign_key "transactions", "users", column: "receiver_id"
   add_foreign_key "transactions", "users", column: "spender_id"
 end

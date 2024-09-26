@@ -2,6 +2,8 @@ Rails.application.routes.draw do
   devise_for :users
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 
+  resources :people, only: [:show]
+
   root to: "static#dashboard"
-  get 'people/:id', to: 'static#person'
+  get 'dummy/:id', to: 'static#person'
 end
