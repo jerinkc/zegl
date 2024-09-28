@@ -21,7 +21,7 @@ class ExpensesController < ApplicationController
   private
 
   def expense_params
-    params.require(:expense).permit(:payer_id, :date, :description, :amount)
+    params.require(:expense).permit(:payer_id, :date, :description, :total_amount)
   end
 
   def additional_params #TODO: Add multiple dropdown select and replace receiver_ids static values

@@ -6,5 +6,6 @@ class Transaction < ApplicationRecord
   scope :paid_to, ->(user) { where(receiver_id: user.id) }
   scope :paid_by, ->(user) { where(spender_id: user.id) }
 
-  validates :amount, presence: true
+  validates :total_amount, :amount, :date,  presence: true
+  validates :total_amount, :amount, numericality: { greater_than: 0 }
 end
