@@ -1,11 +1,18 @@
 class PeopleController < ApplicationController
-  def show
-    #TODO: Imporve
+  def index
+    user_query = UserQuery.new(current_user)
+    @friends = user_query.people_with_transactions
+  end
 
-    @person = User.find(params[:id])
-    @person_spend = @person.transactions_as_spender.paid_to(current_user)
-    @person_received = @person.transactions_as_reciever.paid_by(current_user)
-    @friends_owes_and_owed = User.where('id IN (?)', @person_spend.pluck(:receiver_id) + @person_received.pluck(:spender_id))
-                                 .pluck(:id, :email)
+  def show
+    user_query = UserQuery.new(current_user)
+    @friends = user_query.people_with_transactions.order(created_at: :desc)
+    @person = @friends.find_by(id: params[:id])
+
+    return unless @person.present?
+
+    @transactions = user_query.transactions_with(@person).map do |t|
+                      TransactionPresenter.new(t, current_user, @person)
+                    end
   end
 end

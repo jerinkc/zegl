@@ -1,2 +1,27 @@
-h1 Peoples#show
-p Find me in app/views/peoples/show.html.slim
+.dashboard-wrapper.mt-5
+  aside.side-bar-area
+    .friends-list
+      p.friends-list-header FRIENDS
+      - for friend in @friends
+        = link_to friend.name, person_path(friend), class: 'friend-name'
+  .main-area
+    = render 'top_bar', person: @person
+
+    - if @transactions.present?
+      .expenses-list
+        - @transactions.each do |transaction|
+          .expense-item
+            .item-lhs
+              p = transaction.date
+              p = transaction.title
+            .item-rhs
+              .you-details
+                p = transaction.paid_by
+                p = transaction.total_amount
+              .you-details
+                p = transaction.transfer_intent
+                p = transaction.amount
+            button.remove-btn ❌
+    - else
+      p.m-3 No transactions found
+
