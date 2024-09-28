@@ -1,6 +1,7 @@
 class Expense < ApplicationRecord
-  belongs_to :creator, class_name: 'User'
-  has_many :transactions, as: :transactionable
+  include HasMultipleTransactions
 
-  attr_accessor :amount
+  attr_accessor :share_with_people_ids
+
+  belongs_to :creator, class_name: 'User'
 end
