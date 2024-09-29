@@ -34,6 +34,11 @@ module HasMultipleTransactions
     transactions.build(transactions_data)
   end
 
+
+  def participant_ids
+    receiver_ids + [payer_id]
+  end
+
   private
 
   def calculated_amount
