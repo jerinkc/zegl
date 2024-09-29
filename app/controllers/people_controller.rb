@@ -11,6 +11,7 @@ class PeopleController < ApplicationController
 
     return unless @person.present?
 
+    @transactions_summary = TransactionsSummaryPresenter.new(current_user, @person)
     @transactions = user_query.transactions_with(@person).map do |t|
                       TransactionPresenter.new(t, current_user, @person)
                     end

@@ -9,6 +9,17 @@
 
     - if @transactions.present?
       .expenses-list
+        .dashboard-balances
+          .balances-bar
+            .balance-block
+              p Total balance
+              p = @transactions_summary.total_balance
+            .balance-block
+              p you owe
+              p = @transactions_summary.amount_owe
+            .balance-block
+              p you are owed
+              p = @transactions_summary.amount_due
         - @transactions.each do |transaction|
           .expense-item
             .item-lhs
