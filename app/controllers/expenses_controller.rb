@@ -5,14 +5,16 @@ class ExpensesController < ApplicationController
 
   def new
     @expense = Expense.new
+    @users = User.select(:id, :name)
   end
 
   def create
     expense_params.merge(creator_id: current_user)
     @expense = Expense.new(expense_params.merge(additional_params))
+    @users = User.select(:id, :name)
 
     if @expense.save
-      redirect_to person_path(transaction(@expense).receiver_id)
+      redirect_to person_path(@expense.transactions.first.receiver_id)
     else
       render :new
     end
@@ -21,14 +23,10 @@ class ExpensesController < ApplicationController
   private
 
   def expense_params
-    params.require(:expense).permit(:payer_id, :date, :description, :total_amount)
+    params.require(:expense).permit(:payer_id, :date, :description, :total_amount, receiver_ids: [])
   end
 
-  def additional_params #TODO: Add multiple dropdown select and replace receiver_ids static values
-    { creator_id: current_user.id, receiver_ids: [3, 4, 5] }
-  end
-
-  def transaction(expense)
-    expense.transactions.each { |t| return t if current_user.id != t.receiver_id }
+  def additional_params
+    { creator_id: current_user.id }
   end
 end

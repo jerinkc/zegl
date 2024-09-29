@@ -17,8 +17,10 @@ module HasMultipleTransactions
 
   def build_transactions
     amount, remaining = calculated_amount
-    unique_receiver_ids = (receiver_ids << payer_id).uniq
-    transactions_data = unique_receiver_ids.map.with_index do |receiver_id, index|
+
+    return unless amount.present?
+
+    transactions_data = filtered_receiver_ids.map.with_index do |receiver_id, index|
       {
         date: date,
         amount: index.zero? ? amount + remaining : amount,
@@ -35,9 +37,15 @@ module HasMultipleTransactions
   private
 
   def calculated_amount
-    shareable_amount = (total_amount / receiver_ids.length).round(2)
+    return [0, 0] if !total_amount.present? || total_amount.zero?
+
+    shareable_amount = (total_amount / filtered_receiver_ids.length).round(2)
     remaining_amount = total_amount % shareable_amount
 
     [shareable_amount, remaining_amount]
+  end
+
+  def filtered_receiver_ids
+    receiver_ids.reject(&:blank?).uniq
   end
 end

@@ -12,7 +12,9 @@ class TransactionPresenter
   end
 
   def title
-    transaction.transactionable.description
+    title = transaction.transactionable.description
+
+    title.present? ? title : "Transaction - #{transaction.transactionable.class}"
   end
 
   def paid_by

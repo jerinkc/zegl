@@ -17,3 +17,12 @@ require("jgrowl")
 Rails.start()
 Turbolinks.start()
 ActiveStorage.start()
+
+import SlimSelect from 'slim-select'
+
+$(document).on('turbolinks:load', function() {
+  new SlimSelect({
+    select: '#selectElement'
+  });
+});
+
