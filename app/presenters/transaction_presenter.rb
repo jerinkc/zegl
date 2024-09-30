@@ -12,7 +12,7 @@ class TransactionPresenter
   end
 
   def title
-    title = transaction.transactionable.description
+    title = transaction.transactionable.send(title_key)
 
     title.present? ? title : "Transaction - #{transaction.transactionable.class}"
   end
@@ -26,7 +26,11 @@ class TransactionPresenter
   end
 
   def transfer_intent
-    "#{ sender_name } lent #{ recipient_name }"
+    if type == :settle
+      "#{ sender_name } settled #{ recipient_name }"
+    else
+      "#{ sender_name } lent #{ recipient_name }"
+    end
   end
 
   def amount
@@ -44,10 +48,19 @@ class TransactionPresenter
   private
 
   def type
-    if current_user.id == transaction.spender_id
+    if transaction.transactionable.class == Settlement
+      :settle
+    elsif current_user.id == transaction.spender_id
       :lent
     elsif current_user.id == transaction.receiver_id
       :borrow
     end
+  end
+
+  def title_key
+    {
+      expense: :description,
+      settlement: :notes
+    }[transaction.transactionable_type.downcase.to_sym]
   end
 end

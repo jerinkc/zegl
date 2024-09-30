@@ -6,6 +6,7 @@ class UserQuery
     @amount_due = {}
     @amount_owe = {}
     @amount_total_balance = {}
+    @amount_settled = {}
   end
 
   def transactions_with(person)
@@ -29,7 +30,13 @@ class UserQuery
   end
 
   def amount_owe(person)
-    @amount_owe[person.id] ||= user.transactions_as_receiver.paid_by(person).sum('transactions.amount')
+    total = @amount_owe[person.id] ||= user.transactions_as_receiver.paid_by(person).sum('transactions.amount')
+
+    total - amount_settled(person)
+  end
+
+  def amount_settled(person)
+    @amount_settled[person.id] ||= user.transactions_as_spender.paid_to(person).sum('transactions.amount')
   end
 
   def total_balance(person)

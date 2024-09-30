@@ -1,0 +1,37 @@
+.dashboard-wrapper.mt-5
+  aside.side-bar-area
+    .friends-list
+      p.friends-list-header FRIENDS
+      - for friend in @friends
+        = link_to friend.name, person_path(friend), class: 'friend-name'
+  .main-area
+    = render 'dashboard/navbar', buttons: [:new_expense], person: @person, message: @person.name + ' - Settle'
+    .expenses-list
+      = render 'dashboard/transactions_summary', transactions_summary: @transactions_summary
+
+    .m-3
+      h1 New Settlement
+      - if @settlement.errors.present?
+        p.text-danger
+          = @settlement.errors.full_messages
+      = form_with(model: @settlement, url: person_settlements_path(@person),  local: true, html: { class: 'form-horizontal' }) do |f|
+        .form-group
+          = f.label :date, class: 'col-sm-2 control-label'
+          .col-sm-10
+            .d-flex
+              = f.date_select :date, {}, { class: 'form-control' }
+
+        .form-group
+          = f.label :amount, class: 'col-sm-2 control-label'
+          .col-sm-10
+            = f.number_field :amount, step: :any, class: 'form-control'
+
+        .form-group
+          = f.label :notes, class: 'col-sm-2 control-label'
+          .col-sm-10
+            = f.text_field :notes, class: 'form-control form-control-lg'
+
+        .form-group
+          .col-sm-offset-2.col-sm-10.mt-3
+            = f.submit 'Create', class: 'btn btn-primary'
+

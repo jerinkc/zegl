@@ -1,3 +1,5 @@
 class Settlement < ApplicationRecord
-  belongs_to :users
+  include HasTransaction
+
+  belongs_to :user
 end

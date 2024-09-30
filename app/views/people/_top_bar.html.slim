@@ -8,4 +8,4 @@
   .top-bar-actions
     = link_to 'Add an expense', new_expense_path, class: 'btn btn-primary m-2'
     - if person.present?
-      button.btn.btn-secondary type="button"  Settle up
+      = link_to 'Settle up', new_person_settlement_path(person), class: 'btn btn-secondary'

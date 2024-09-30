@@ -5,21 +5,10 @@
       - for friend in @friends
         = link_to friend.name, person_path(friend), class: 'friend-name'
   .main-area
-    = render 'top_bar', person: @person
-
+    = render 'dashboard/navbar', buttons: [:new_expense, :settle], person: @person, message: @person.name + ' - Transactions'
     - if @transactions.present?
       .expenses-list
-        .dashboard-balances
-          .balances-bar
-            .balance-block
-              p Total balance
-              p = @transactions_summary.total_balance
-            .balance-block
-              p you owe
-              p = @transactions_summary.amount_owe
-            .balance-block
-              p you are owed
-              p = @transactions_summary.amount_due
+        = render 'dashboard/transactions_summary', transactions_summary: @transactions_summary
         - @transactions.each do |transaction|
           .expense-item
             .item-lhs
