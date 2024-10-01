@@ -25,18 +25,36 @@ class UserQuery
                   .having('COUNT(spender_transactions.id) > 0 OR COUNT(receiver_transactions.id) > 0')
   end
 
-  def amount_due(person)
-    @amount_due[person.id] ||= user.transactions_as_spender.paid_to(person).sum('transactions.amount')
+  def calculated_users_and_balances
+    @friends_with_transactions ||= User.select('users.id, users.name,
+                                      SUM(CASE
+                                          WHEN users.id = receiver_transactions.spender_id THEN receiver_transactions.amount
+                                          ELSE 0
+                                          END) as amount_owe,
+                                      SUM(CASE
+                                          WHEN users.id = receiver_transactions.receiver_id THEN receiver_transactions.amount
+                                          ELSE 0
+                                          END) as amount_due')
+                              .joins("LEFT JOIN transactions AS receiver_transactions ON receiver_transactions.receiver_id = users.id OR
+                                        receiver_transactions.spender_id = users.id")
+                              .where("receiver_transactions.spender_id != receiver_transactions.receiver_id AND
+                                      users.id != :user_id AND
+                                    (receiver_transactions.receiver_id = :user_id OR receiver_transactions.spender_id = :user_id)",
+                                    user_id: user.id)
+                              .group('users.id, users.name')
+
   end
 
-  def amount_owe(person)
-    total = @amount_owe[person.id] ||= user.transactions_as_receiver.paid_by(person).sum('transactions.amount')
-
-    total - amount_settled(person)
+  def total_amount_due
+    @total_amount_due ||= calculated_users_and_balances.map(&:amount_due).sum
   end
 
-  def amount_settled(person)
-    @amount_settled[person.id] ||= user.transactions_as_spender.paid_to(person).sum('transactions.amount')
+  def total_amount_owe
+    @total_amount_owe ||= calculated_users_and_balances.map(&:amount_owe).sum
+  end
+
+  def total_balance_amount
+    @total_balance_amount ||= (total_amount_due - total_amount_owe)
   end
 
   def total_balance(person)

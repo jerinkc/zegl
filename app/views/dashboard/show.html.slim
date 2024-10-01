@@ -1,0 +1,36 @@
+
+.dashboard-wrapper.mt-5
+  aside.side-bar-area
+    .friends-list
+      p.friends-list-header FRIENDS
+      - for friend in @friends_transactions
+        = link_to friend.name, person_path(friend), class: 'friend-name'
+  .main-area
+    = render 'dashboard/navbar', buttons: [:new_expense], person: @person, message: 'Summary'
+
+    .dashboard-balances
+      = render 'dashboard/transactions_summary', transactions_summary: @transactions_summary
+      .dashboard-detail
+        .detail-block
+          h2.detail-title you owe
+          - for friend in @friends_transactions
+            - if !friend.amount_owe.zero?
+              .user-detail
+                img.user-img alt="profile" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" /
+                .user-info
+                  p = friend.first_name
+                  p
+                    | you owe
+                    = ' ' + format('$%.2f', friend.amount_owe.to_f)
+        .detail-block
+          h2.detail-title you are owed
+          - for friend in @friends_transactions
+            - if !friend.amount_due.zero?
+              .user-detail
+                img.user-img alt="profile" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" /
+                .user-info
+                  p = friend.first_name
+                  p
+                    | owes you
+                    = ' ' + format('$%.2f', friend.amount_due.to_f)
+    = render 'dashboard/footer'

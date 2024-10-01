@@ -5,10 +5,9 @@
       - for friend in @friends
         = link_to friend.name, person_path(friend), class: 'friend-name'
   .main-area
-    = render 'dashboard/navbar', buttons: [:new_expense, :settle], person: @person, message: @person.name + ' - Transactions'
+    = render 'dashboard/navbar', buttons: [:new_expense, :settle, :dashboard], person: @person, message: @person.name + ' - Transactions'
     - if @transactions.present?
       .expenses-list
-        = render 'dashboard/transactions_summary', transactions_summary: @transactions_summary
         - @transactions.each do |transaction|
           .expense-item
             .item-lhs

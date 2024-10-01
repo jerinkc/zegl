@@ -10,7 +10,7 @@ module HasMultipleTransactions
     validates :total_amount, :date, :payer_id, :receiver_ids, presence: true
     validates :total_amount, numericality: { greater_than: 0 }
 
-    has_many :transactions, as: :transactionable
+    has_many :transactions, as: :transactionable, dependent: :destroy
 
     before_validation :build_transactions
   end
@@ -20,7 +20,7 @@ module HasMultipleTransactions
 
     return unless amount.present?
 
-    transactions_data = filtered_receiver_ids.map.with_index do |receiver_id, index|
+    transactions_data = participant_ids.map.with_index do |receiver_id, index|
       {
         date: date,
         amount: index.zero? ? amount + remaining : amount,
@@ -36,7 +36,7 @@ module HasMultipleTransactions
 
 
   def participant_ids
-    receiver_ids + [payer_id]
+    filtered_receiver_ids + [payer_id]
   end
 
   private
@@ -44,7 +44,7 @@ module HasMultipleTransactions
   def calculated_amount
     return [0, 0] if !total_amount.present? || total_amount.zero?
 
-    shareable_amount = (total_amount / filtered_receiver_ids.length).round(2)
+    shareable_amount = (total_amount / participant_ids.length).round(2)
     remaining_amount = total_amount % shareable_amount
 
     [shareable_amount, remaining_amount]

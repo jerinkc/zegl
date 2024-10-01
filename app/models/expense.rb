@@ -10,7 +10,7 @@ class Expense < ApplicationRecord
   private
 
   def creator_is_participant?
-    return if participants.include? creator_id
+    return if participant_ids.include? creator_id
 
     errors.add(:creator_id, 'not a participant')
   end
