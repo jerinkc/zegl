@@ -1,0 +1,28 @@
+.dashboard-wrapper.mt-5
+  aside.side-bar-area
+    .friends-list
+      p.friends-list-header FRIENDS
+      - for friend in @friends
+        = link_to friend.name, person_path(friend), class: 'friend-name'
+  .main-area
+    = render 'dashboard/navbar', buttons: [:new_expense, :settle, :dashboard], person: @person, message: @person.name + ' - Transactions'
+    - if @transactions.present?
+      .expenses-list
+        - @transactions.each do |transaction|
+          .expense-item
+            .item-lhs
+              p = transaction.date
+              p = transaction.title
+            .item-rhs
+              .you-details
+                p = transaction.paid_by
+                p = transaction.total_amount
+              .you-details
+                p = transaction.transfer_intent
+                p = transaction.amount
+          - if false
+            button.remove-btn ❌
+    - else
+      p.m-3 No transactions found
+    = render 'dashboard/footer'
+

@@ -1,0 +1,11 @@
+.dashboard-balances
+  .balances-bar
+    .balance-block
+      p Total balance
+      p = formatted_amount(transactions_summary[:total_balance_amount])
+    .balance-block
+      p you owe
+      p = formatted_amount(transactions_summary[:total_amount_owe])
+    .balance-block
+      p total due to you
+      p = formatted_amount(transactions_summary[:total_amount_due])

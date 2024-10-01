@@ -1,0 +1,13 @@
+.top-bar
+  div
+    h1.top-bar-title Dashboard
+    span
+      strong.text-secondary
+        = message
+  .top-bar-actions
+    - if buttons.include? :dashboard
+      = link_to 'Dashboard', dashboard_path, class: 'btn btn-outline-primary m-2'
+    - if buttons.include? :new_expense
+      = link_to 'Add an expense', new_expense_path, class: 'btn btn-primary m-2'
+    - if buttons.include?(:settle) && current_user.id != person.id
+      = link_to 'Settle up', new_person_settlement_path(person), class: 'btn btn-secondary disabled'
